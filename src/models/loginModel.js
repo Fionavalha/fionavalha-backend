@@ -1,12 +1,11 @@
 import { criptografar } from "../../utils/criptografia.js";
-import connect from "../config/database.js";
+import pool from "../config/database.js";
 
 export async function insertLogin(req) {
-  const client = await connect();
   const sql = "SELECT nome_barbeiro, senha FROM barbeiros WHERE nome_barbeiro = $1";
   const values = [req.nome_barbeiro];
 
-  const result = await client.query(sql, values);
+  const result = await pool.query(sql, values);
 
   if (result.rows.length === 0) {
     return { erro: "Usuário não encontrado", status: 404 };
