@@ -6,6 +6,7 @@ import barbaRoutes from "./barbasRoutes.js";
 import sobrancelhaRoutes from "./sobrancelhasRoutes.js";
 import adicionaisRoutes from "./adicionaisRoutes.js";
 import formasPagamentoRoutes from "./formasPagamentoRoutes.js";
+import servicosRealizadosRoutes from "./servicosRealizadosRoutes.js";
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use("/barbas", barbaRoutes);
 router.use("/sobrancelhas", sobrancelhaRoutes);
 router.use("/adicionais", adicionaisRoutes);
 router.use("/formas-pagamento", formasPagamentoRoutes);
+router.use("/servicos-realizados", servicosRealizadosRoutes);
 
 export default router;
