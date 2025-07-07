@@ -15,7 +15,10 @@ export async function insertLogin(req) {
   const confere = await criptografar("D", req.senha, usuario.senha);
 
   if (confere) {
-    return { mensagem: "Login OK" };
+    return {
+      mensagem: "Login OK",
+      nome: usuario.nome_barbeiro,
+    };
   } else {
     return { erro: "Senha incorreta", status: 401 };
   }
