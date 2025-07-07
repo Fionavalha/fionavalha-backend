@@ -1,14 +1,12 @@
-import auth from "basic-auth";
+export function bearerToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-export function basicAuth(req, res, next) {
-  const user = auth(req);
+  if (!token) return res.sendStatus(401);
 
-  const username = "hP3S7l11Kg]";
-  const password = "3|^B2hfnI?47";
-
-  if (!user || user.name !== username || user.pass !== password) {
-    res.set('WWW-Authenticate", "Basic realm="example"');
-    return res.status(401).send("Acesso negado");
-  }
-  next();
+  jwt.verify(token, process.env.SECRET_KEY, (err, usuario) => {
+    if (err) return res.sendStatus(403);
+    req.usuario = usuario;
+    next();
+  });
 }
