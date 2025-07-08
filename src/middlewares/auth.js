@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken"
+
 export function bearerToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
