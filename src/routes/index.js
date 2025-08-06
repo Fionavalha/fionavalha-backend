@@ -7,6 +7,7 @@ import sobrancelhaRoutes from "./sobrancelhasRoutes.js";
 import adicionaisRoutes from "./adicionaisRoutes.js";
 import formasPagamentoRoutes from "./formasPagamentoRoutes.js";
 import servicosRealizadosRoutes from "./servicosRealizadosRoutes.js";
+import receitasRoutes from "./receitasRoutes.js";
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.use("/sobrancelhas", bearerToken, sobrancelhaRoutes);
 router.use("/adicionais", bearerToken, adicionaisRoutes);
 router.use("/formas-pagamento", bearerToken, formasPagamentoRoutes);
 router.use("/servicos-realizados", bearerToken, servicosRealizadosRoutes);
+router.use("/receitas", bearerToken, receitasRoutes);
 
 export default router;
