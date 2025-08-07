@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { listarCabelos, listarCabelo, adicionarCabelo, editarCabelo, excluirCabelo } from "../controllers/CabeloController.js";
+import { listarCabelos, listarCabelo, adicionarCabelo, editarCabelo, excluirCabelo } from "../controllers/cabeloController.js";
 
 const router = Router();
 
