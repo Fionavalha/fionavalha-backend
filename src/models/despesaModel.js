@@ -29,10 +29,26 @@ export async function selectDespesa(id_despesa) {
 export async function selectDespesas() {
   const sql = ` 
   SELECT id_despesa, nome_despesa, valor_despesa, 
-    TO_CHAR(data_despesa, 'YYYY-MM-DD') AS data_despesa,fixa
+    TO_CHAR(data_despesa, 'YYYY-MM-DD') AS data_despesa,
+    CASE 
+      WHEN fixa = false THEN 'N'
+      ELSE 'S'
+    END AS fixa
   FROM despesas`;
-  const res = await pool.query(sql);
-  return res.rows;
+
+  const sqlTotalGeral = `
+    SELECT
+      COUNT(*)::INTEGER AS qtd,
+      SUM(valor_despesa)::NUMERIC(10,2) AS valor_total
+    FROM despesas
+  `;
+
+  const resDespesas = await pool.query(sql);
+  const resTotal = await pool.query(sqlTotalGeral);
+  return {
+    despesas: resDespesas.rows,
+    total_geral: resTotal.rows[0],
+  };
 }
 
 export async function updateDespesa(id_despesa, req) {
