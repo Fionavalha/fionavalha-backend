@@ -11,7 +11,7 @@ export async function listarDespesa(req, res) {
 }
 
 export async function listarDespesas(req, res) {
-  const resposta = await selectDespesas();
+  const resposta = await selectDespesas(req.query);
   res.json(resposta);
 }
 

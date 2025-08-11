@@ -26,25 +26,47 @@ export async function selectDespesa(id_despesa) {
   return res.rows;
 }
 
-export async function selectDespesas() {
-  const sql = ` 
-  SELECT id_despesa, nome_despesa, valor_despesa, 
-    TO_CHAR(data_despesa, 'YYYY-MM-DD') AS data_despesa,
-    CASE 
-      WHEN fixa = false THEN 'N'
-      ELSE 'S'
-    END AS fixa
-  FROM despesas`;
+export async function selectDespesas(req) {
+  let sql, sqlTotalGeral;
+  if (req.data_inicial !== null && req.data_final !== null) {
+    sql = ` 
+    SELECT id_despesa, nome_despesa, valor_despesa, 
+      TO_CHAR(data_despesa, 'YYYY-MM-DD') AS data_despesa,
+      CASE 
+        WHEN fixa = false THEN 'N'
+        ELSE 'S'
+      END AS fixa
+    FROM despesas 
+    WHERE data_despesa BETWEEN $1 AND $2`;
 
-  const sqlTotalGeral = `
+    sqlTotalGeral = `
     SELECT
       COUNT(*)::INTEGER AS qtd,
       SUM(valor_despesa)::NUMERIC(10,2) AS valor_total
     FROM despesas
-  `;
+    WHERE data_despesa BETWEEN $1 AND $2`;
+  } else {
+    sql = ` 
+    SELECT id_despesa, nome_despesa, valor_despesa, 
+      TO_CHAR(data_despesa, 'YYYY-MM-DD') AS data_despesa,
+      CASE 
+        WHEN fixa = false THEN 'N'
+        ELSE 'S'
+      END AS fixa
+    FROM despesas`;
 
-  const resDespesas = await pool.query(sql);
-  const resTotal = await pool.query(sqlTotalGeral);
+    sqlTotalGeral = `
+      SELECT
+        COUNT(*)::INTEGER AS qtd,
+        SUM(valor_despesa)::NUMERIC(10,2) AS valor_total
+      FROM despesas
+    `;
+  }
+
+  const values = [req.data_inicial, req.data_final];
+
+  const resDespesas = await pool.query(sql, values);
+  const resTotal = await pool.query(sqlTotalGeral, values);
   return {
     despesas: resDespesas.rows,
     total_geral: resTotal.rows[0],
