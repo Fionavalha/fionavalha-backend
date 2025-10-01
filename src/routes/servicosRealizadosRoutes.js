@@ -1,16 +1,11 @@
 import { Router } from "express";
-import {
-  listarServicosRealizados,
-  listarServicoRealizado,
-  adicionarServicoRealizado,
-  editarServicoRealizado,
-  excluirServicoRealizado,
-} from "../controllers/servicoRealizadoController.js";
+import { listarServicosRealizados, listarServicoRealizado, adicionarServicoRealizado, editarServicoRealizado, excluirServicoRealizado, listarItensServico } from "../controllers/servicoRealizadoController.js";
 
 const router = Router();
 
 router.get("/:id_servico_realizado", listarServicoRealizado);
 router.get("/", listarServicosRealizados);
+router.get("/itens/:id_servico_realizado", listarItensServico);
 router.post("/", adicionarServicoRealizado);
 router.put("/:id_servico_realizado", editarServicoRealizado);
 router.delete("/:id_servico_realizado", excluirServicoRealizado);

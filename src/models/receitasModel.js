@@ -1,74 +1,52 @@
 import pool from "../config/database.js";
 
+function formatarDataLocal(date) {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export async function selectReceitas(req) {
+  const dataInicial = req.data_inicial;
+  const dataFinal = req.data_final;
+
   const sql = `
-    SELECT
-      c.nome_cabelo AS nome,
-      COUNT(*)::INTEGER AS qtd,
-      SUM(i.valor_item)::NUMERIC(10,2) AS valor_total
-    FROM itens_servico_realizado i
-    JOIN cabelos c ON c.id_cabelo = i.item_id
-    JOIN servicos_realizados sr ON sr.id_servico_realizado = i.servico_realizado_id
-    WHERE i.tipo = 'cabelo'
-      AND sr.data_servico_realizado::date BETWEEN $1 AND $2
-    GROUP BY c.nome_cabelo
-
-  UNION ALL
-
-    SELECT
-      b.nome_barba AS nome,
-      COUNT(*)::INTEGER AS qtd,
-      SUM(i.valor_item)::NUMERIC(10,2) AS valor_total
-    FROM itens_servico_realizado i
-    JOIN barbas b ON b.id_barba = i.item_id
-    JOIN servicos_realizados sr ON sr.id_servico_realizado = i.servico_realizado_id
-    WHERE i.tipo = 'barba'
-      AND sr.data_servico_realizado::date BETWEEN $1 AND $2
-    GROUP BY b.nome_barba
-
-  UNION ALL
-
-    SELECT
-      s.nome_sobrancelha AS nome,
-      COUNT(*)::INTEGER AS qtd,
-      SUM(i.valor_item)::NUMERIC(10,2) AS valor_total
-    FROM itens_servico_realizado i
-    JOIN sobrancelhas s ON s.id_sobrancelha = i.item_id
-    JOIN servicos_realizados sr ON sr.id_servico_realizado = i.servico_realizado_id
-    WHERE i.tipo = 'sobrancelha'
-      AND sr.data_servico_realizado::date BETWEEN $1 AND $2
-    GROUP BY s.nome_sobrancelha
-
-  UNION ALL
-
-    SELECT
-      a.nome_adicional AS nome,
-      COUNT(*)::INTEGER AS qtd,
-      SUM(i.valor_item)::NUMERIC(10,2) AS valor_total
-    FROM itens_servico_realizado i
-    JOIN adicionais a ON a.id_adicional = i.item_id
-    JOIN servicos_realizados sr ON sr.id_servico_realizado = i.servico_realizado_id
-    WHERE i.tipo = 'adicional'
-      AND sr.data_servico_realizado::date BETWEEN $1 AND $2
-    GROUP BY a.nome_adicional
-
-  ORDER BY nome
+    SELECT nome, tipo, COUNT(DISTINCT servico_realizado_id) AS qtd, SUM(valor_item)::NUMERIC(10,2) AS valor_total
+    FROM (
+      SELECT 
+        i.item_id, 
+        i.tipo, 
+        i.servico_realizado_id,
+        i.valor_item,
+        CASE 
+          WHEN i.tipo='cabelo' THEN c.nome_cabelo
+          WHEN i.tipo='barba' THEN b.nome_barba
+          WHEN i.tipo='sobrancelha' THEN s.nome_sobrancelha
+          WHEN i.tipo='adicional' THEN a.nome_adicional
+          ELSE 'Outro'
+        END AS nome
+      FROM itens_servico_realizado i
+      JOIN servicos_realizados sr ON sr.id_servico_realizado = i.servico_realizado_id
+      LEFT JOIN cabelos c ON i.tipo='cabelo' AND c.id_cabelo = i.item_id
+      LEFT JOIN barbas b ON i.tipo='barba' AND b.id_barba = i.item_id
+      LEFT JOIN sobrancelhas s ON i.tipo='sobrancelha' AND s.id_sobrancelha = i.item_id
+      LEFT JOIN adicionais a ON i.tipo='adicional' AND a.id_adicional = i.item_id
+      WHERE sr.data_servico_realizado::date BETWEEN $1 AND $2
+    ) AS t
+    GROUP BY nome, tipo
+    ORDER BY nome
   `;
 
-  const sqlTotalGeral = `
-    SELECT
-      COUNT(*)::INTEGER AS qtd,
-      SUM(valor_item)::NUMERIC(10,2) AS valor_total
+  const sqlTotal = `
+    SELECT COUNT(DISTINCT servico_realizado_id) AS qtd,
+           SUM(valor_item)::NUMERIC(10,2) AS valor_total
     FROM itens_servico_realizado i
-    JOIN servicos_realizados s 
-      ON s.id_servico_realizado = i.servico_realizado_id
-    WHERE s.data_servico_realizado::date BETWEEN $1 AND $2;
+    JOIN servicos_realizados sr ON sr.id_servico_realizado = i.servico_realizado_id
+    WHERE sr.data_servico_realizado::date BETWEEN $1 AND $2
   `;
 
-  const values = [req.data_inicial, req.data_final];
-
+  const values = [dataInicial, dataFinal];
   const resCortes = await pool.query(sql, values);
-  const resTotal = await pool.query(sqlTotalGeral, values);
+  const resTotal = await pool.query(sqlTotal, values);
 
   return {
     cortes: resCortes.rows,

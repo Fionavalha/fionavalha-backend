@@ -156,3 +156,40 @@ export async function deleteServicoRealizado(id) {
     client.release();
   }
 }
+
+export async function selectItensServicoRealizado(id_servico) {
+  const sql = `
+    SELECT
+      sr.id_servico_realizado,
+      sr.forma_pagamento_id, 
+      f.nome_pagamento, 
+      sr.valor_total, 
+      sr.data_servico_realizado, 
+      isr.tipo, 
+      isr.valor_item, 
+      isr.item_id,
+      CASE
+        WHEN isr.tipo = 'cabelo' THEN c.nome_cabelo
+        WHEN isr.tipo = 'barba' THEN b.nome_barba
+        WHEN isr.tipo = 'sobrancelha' THEN s.nome_sobrancelha
+        WHEN isr.tipo = 'adicional' THEN a.nome_adicional
+        ELSE 'Outro'
+      END AS nome_item
+    FROM servicos_realizados sr
+    INNER JOIN formas_pagamento f 
+      ON sr.forma_pagamento_id = f.id_forma_pagamento
+    INNER JOIN itens_servico_realizado isr 
+      ON sr.id_servico_realizado = isr.servico_realizado_id
+    LEFT JOIN cabelos c 
+      ON isr.tipo = 'cabelo' AND c.id_cabelo = isr.item_id
+    LEFT JOIN barbas b 
+      ON isr.tipo = 'barba' AND b.id_barba = isr.item_id
+    LEFT JOIN sobrancelhas s 
+      ON isr.tipo = 'sobrancelha' AND s.id_sobrancelha = isr.item_id
+    LEFT JOIN adicionais a 
+      ON isr.tipo = 'adicional' AND a.id_adicional = isr.item_id
+    WHERE sr.id_servico_realizado = $1;
+  `;
+  const res = await pool.query(sql, [id_servico]);
+  return res.rows;
+}
