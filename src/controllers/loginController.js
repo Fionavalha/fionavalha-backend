@@ -9,11 +9,13 @@ export async function realizarLogin(req, res) {
       return res.status(resultado.status).json({ erro: resultado.erro });
     }
 
-    const token = jwt.sign({ nome: resultado.nome }, process.env.SECRET_KEY);
+    const token = jwt.sign({ nome_barbeiro: resultado.nome_barbeiro }, process.env.SECRET_KEY);
 
     return res.json({
       mensagem: resultado.mensagem,
       token: token,
+      id_barbeiro: resultado.id_barbeiro,
+      nome_barbeiro: resultado.nome_barbeiro,
     });
   } catch (error) {
     console.error(error);

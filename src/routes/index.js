@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { bearerToken } from "../middlewares/auth.js";
 import loginRouter from "./loginRoutes.js";
+import alterarSenhaRouter from "./alterarSenhaRoutes.js";
 import cabeloRoutes from "./cabelosRoutes.js";
 import barbaRoutes from "./barbasRoutes.js";
 import sobrancelhaRoutes from "./sobrancelhasRoutes.js";
@@ -13,6 +14,7 @@ import despesasRoutes from "./despesasRoutes.js";
 const router = Router();
 
 router.use("/login", loginRouter);
+router.use("/alterar-senha", bearerToken, alterarSenhaRouter);
 router.use("/cabelos", bearerToken, cabeloRoutes);
 router.use("/barbas", bearerToken, barbaRoutes);
 router.use("/sobrancelhas", bearerToken, sobrancelhaRoutes);

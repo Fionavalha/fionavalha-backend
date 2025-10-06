@@ -2,7 +2,7 @@ import { criptografar } from "../../utils/criptografia.js";
 import pool from "../config/database.js";
 
 export async function insertLogin(req) {
-  const sql = "SELECT nome_barbeiro, senha FROM barbeiros WHERE nome_barbeiro = $1";
+  const sql = "SELECT id_barbeiro, nome_barbeiro, senha FROM barbeiros WHERE nome_barbeiro = $1";
   const values = [req.nome_barbeiro];
 
   const result = await pool.query(sql, values);
@@ -17,7 +17,8 @@ export async function insertLogin(req) {
   if (confere) {
     return {
       mensagem: "Login OK",
-      nome: usuario.nome_barbeiro,
+      id_barbeiro: usuario.id_barbeiro,
+      nome_barbeiro: usuario.nome_barbeiro,
     };
   } else {
     return { erro: "Senha incorreta", status: 401 };
