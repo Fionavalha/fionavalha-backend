@@ -7,7 +7,7 @@ export async function insertAlteracaoSenha(req) {
   let values = [id_barbeiro];
 
   const result = await pool.query(sql, values);
-
+  
   if (result.rows.length === 0) {
     return { mensagem: "Usuário não encontrado", status: 404 };
   }
