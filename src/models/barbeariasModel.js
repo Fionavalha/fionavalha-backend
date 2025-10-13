@@ -14,3 +14,18 @@ export async function updateNumeroClientes(id_barbeiro, req) {
   const res = await pool.query(sql, values);
   return res.rows[0];
 }
+
+export async function selectStatusBarbearia(id_barbeiro) {
+  const sql = "SELECT status FROM barbearias WHERE barbeiro_id = $1";
+  
+  const values = [id_barbeiro];
+  const res = await pool.query(sql, values);
+  return res.rows[0];
+}
+
+export async function updateStatusBarbearia(id_barbeiro, req) {
+  const sql = "UPDATE barbearias SET status = $1 WHERE barbeiro_id = $2 RETURNING status";
+  const values = [req.status, id_barbeiro];
+  const res = await pool.query(sql, values);
+  return res.rows[0];
+}
