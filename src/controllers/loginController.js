@@ -18,7 +18,6 @@ export async function realizarLogin(req, res) {
       nome_barbeiro: resultado.nome_barbeiro,
     });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ erro: "Erro no servidor" });
   }
 }

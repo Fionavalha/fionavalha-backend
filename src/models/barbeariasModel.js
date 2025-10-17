@@ -1,31 +1,27 @@
 import pool from "../config/database.js";
 
-export async function selectNumeroClientes(id_barbeiro) {
-  const sql = "SELECT numero_clientes FROM barbearias WHERE barbeiro_id = $1";
-  
-  const values = [id_barbeiro];
+export async function selectNumeroClientes() {
+  const sql = "SELECT numero_clientes FROM barbearias WHERE barbeiro_id = 1";
+  const res = await pool.query(sql);
+  return res.rows[0];
+}
+
+export async function updateNumeroClientes(req) {
+  const sql = "UPDATE barbearias SET numero_clientes = $1 WHERE barbeiro_id = 1 RETURNING numero_clientes";
+  const values = [req.numero_clientes];
   const res = await pool.query(sql, values);
   return res.rows[0];
 }
 
-export async function updateNumeroClientes(id_barbeiro, req) {
-  const sql = "UPDATE barbearias SET numero_clientes = $1 WHERE barbeiro_id = $2 RETURNING numero_clientes";
-  const values = [req.numero_clientes, id_barbeiro];
-  const res = await pool.query(sql, values);
+export async function selectStatusBarbearia() {
+  const sql = "SELECT status FROM barbearias WHERE barbeiro_id = 1";
+  const res = await pool.query(sql);
   return res.rows[0];
 }
 
-export async function selectStatusBarbearia(id_barbeiro) {
-  const sql = "SELECT status FROM barbearias WHERE barbeiro_id = $1";
-  
-  const values = [id_barbeiro];
-  const res = await pool.query(sql, values);
-  return res.rows[0];
-}
-
-export async function updateStatusBarbearia(id_barbeiro, req) {
-  const sql = "UPDATE barbearias SET status = $1 WHERE barbeiro_id = $2 RETURNING status";
-  const values = [req.status, id_barbeiro];
+export async function updateStatusBarbearia(req) {
+  const sql = "UPDATE barbearias SET status = $1 WHERE barbeiro_id = 1 RETURNING status";
+  const values = [req.status];
   const res = await pool.query(sql, values);
   return res.rows[0];
 }

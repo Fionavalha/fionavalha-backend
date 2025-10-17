@@ -34,7 +34,6 @@ export async function insertAlteracaoSenha(req) {
 
     return { mensagem: "Senha alterada com sucesso!", status: 200 };
   } catch (error) {
-    console.error("Erro ao atualizar senha no DB:", error);
     return { mensagem: "Erro interno do servidor ao salvar senha", status: 500 };
   }
 }

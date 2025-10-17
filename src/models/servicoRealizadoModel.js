@@ -39,8 +39,11 @@ export async function insertServicoRealizado(req) {
   }
 }
 
-export async function selectServicosRealizados() {
-  const sql = `
+export async function selectServicosRealizados(data) {
+  let sql, res;
+  
+  if (!data) {
+    sql = `
     SELECT
       sr.id_servico_realizado,
       STRING_AGG(
@@ -66,8 +69,38 @@ export async function selectServicosRealizados() {
     GROUP BY sr.id_servico_realizado, sr.data_servico_realizado, f.nome_pagamento, sr.valor_total
     ORDER BY sr.data_servico_realizado DESC;
   `;
+    res = await pool.query(sql);
+  } else {
+    sql = `
+    SELECT
+      sr.id_servico_realizado,
+      STRING_AGG(
+        CASE
+          WHEN i.tipo = 'cabelo' THEN c.nome_cabelo
+          WHEN i.tipo = 'barba' THEN b.nome_barba
+          WHEN i.tipo = 'sobrancelha' THEN s.nome_sobrancelha
+          WHEN i.tipo = 'adicional' THEN a.nome_adicional
+          ELSE 'Outro'
+        END,
+        ' - ' ORDER BY i.tipo DESC
+      ) AS nome_servico,
+      TO_CHAR(sr.data_servico_realizado, 'HH24:MI') AS horario,
+      f.nome_pagamento AS forma_pagamento,
+      sr.valor_total
+    FROM servicos_realizados sr
+    JOIN formas_pagamento f ON f.id_forma_pagamento = sr.forma_pagamento_id
+    JOIN itens_servico_realizado i ON i.servico_realizado_id = sr.id_servico_realizado
+    LEFT JOIN cabelos c ON i.tipo = 'cabelo' AND c.id_cabelo = i.item_id
+    LEFT JOIN barbas b ON i.tipo = 'barba' AND b.id_barba = i.item_id
+    LEFT JOIN sobrancelhas s ON i.tipo = 'sobrancelha' AND s.id_sobrancelha = i.item_id
+    LEFT JOIN adicionais a ON i.tipo = 'adicional' AND a.id_adicional = i.item_id
+    WHERE sr.data_servico_realizado::DATE = $1
+    GROUP BY sr.id_servico_realizado, sr.data_servico_realizado, f.nome_pagamento, sr.valor_total
+    ORDER BY sr.data_servico_realizado DESC;
+  `;
+    res = await pool.query(sql, [data]);
+  }
 
-  const res = await pool.query(sql);
   return res.rows;
 }
 
@@ -163,6 +196,7 @@ export async function selectItensServicoRealizado(id_servico) {
       sr.id_servico_realizado,
       sr.forma_pagamento_id, 
       f.nome_pagamento, 
+      f.adicional_forma_pagamento,
       sr.valor_total, 
       sr.data_servico_realizado, 
       isr.tipo, 

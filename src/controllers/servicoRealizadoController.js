@@ -2,19 +2,8 @@ import * as ServicoModel from "../models/servicoRealizadoModel.js";
 
 export async function listarServicosRealizados(req, res) {
   try {
-    const servicos = await ServicoModel.selectServicosRealizados();
+    const servicos = await ServicoModel.selectServicosRealizados(req.query.data);
     res.json(servicos);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
-
-export async function listarServicoRealizado(req, res) {
-  try {
-    const { id_servico_realizado } = req.params;
-    const servico = await ServicoModel.selectServicoRealizado(id_servico_realizado);
-    if (!servico.length) return res.status(404).json({ message: "Serviço não encontrado" });
-    res.json(servico[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

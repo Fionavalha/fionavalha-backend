@@ -3,9 +3,9 @@ import { listarNumeroClientes, editarNumeroClientes, listarStatusBarbearia, edit
 
 const router = Router();
 
-router.get("/numero-clientes/:id_barbeiro", listarNumeroClientes);
-router.put("/numero-clientes/:id_barbeiro", editarNumeroClientes);
-router.get("/status/:id_barbeiro", listarStatusBarbearia);
-router.put("/status/:id_barbeiro", editarStatusBarbearia);
+router.get("/numero-clientes", listarNumeroClientes);
+router.put("/numero-clientes", editarNumeroClientes);
+router.get("/status", listarStatusBarbearia);
+router.put("/status", editarStatusBarbearia);
 
 export default router;
