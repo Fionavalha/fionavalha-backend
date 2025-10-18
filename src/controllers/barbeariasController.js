@@ -1,4 +1,9 @@
-import { selectNumeroClientes, updateNumeroClientes, selectStatusBarbearia, updateStatusBarbearia } from "../models/barbeariasModel.js";
+import { selectNumeroClientes, updateNumeroClientes, selectStatusBarbearia, updateStatusBarbearia, selectBarbearias } from "../models/barbeariasModel.js";
+
+export async function listarBarbearias(req, res) {
+  const resposta = await selectBarbearias();
+  res.json(resposta);
+}
 
 export async function listarNumeroClientes(req, res) {
   const resposta = await selectNumeroClientes();

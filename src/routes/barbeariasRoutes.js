@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { listarNumeroClientes, editarNumeroClientes, listarStatusBarbearia, editarStatusBarbearia } from "../controllers/barbeariasController.js";
+import { listarNumeroClientes, editarNumeroClientes, listarStatusBarbearia, editarStatusBarbearia, listarBarbearias } from "../controllers/barbeariasController.js";
 
 const router = Router();
 
+router.get("/", listarBarbearias);
 router.get("/numero-clientes", listarNumeroClientes);
 router.put("/numero-clientes", editarNumeroClientes);
 router.get("/status", listarStatusBarbearia);

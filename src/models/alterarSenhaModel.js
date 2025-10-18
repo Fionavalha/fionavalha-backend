@@ -2,12 +2,9 @@ import { criptografar } from "../../utils/criptografia.js";
 import pool from "../config/database.js";
 
 export async function insertAlteracaoSenha(req) {
-  let sql = "SELECT senha FROM barbeiros WHERE id_barbeiro = $1";
-  const id_barbeiro = req.id_barbeiro;
-  let values = [id_barbeiro];
+  let sql = "SELECT senha FROM barbeiros WHERE id_barbeiro = 1";
+  const result = await pool.query(sql);
 
-  const result = await pool.query(sql, values);
-  
   if (result.rows.length === 0) {
     return { mensagem: "Usuário não encontrado", status: 404 };
   }
