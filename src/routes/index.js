@@ -16,14 +16,14 @@ const router = Router();
 
 router.use("/login", loginRouter);
 router.use("/alterar-senha", bearerToken, alterarSenhaRouter);
-router.use("/cabelos", bearerToken, cabeloRoutes);
-router.use("/barbas", bearerToken, barbaRoutes);
-router.use("/sobrancelhas", bearerToken, sobrancelhaRoutes);
-router.use("/adicionais", bearerToken, adicionaisRoutes);
+router.use("/cabelos", cabeloRoutes);
+router.use("/barbas", barbaRoutes);
+router.use("/sobrancelhas", sobrancelhaRoutes);
+router.use("/adicionais", adicionaisRoutes);
 router.use("/formas-pagamento", bearerToken, formasPagamentoRoutes);
 router.use("/servicos-realizados", bearerToken, servicosRealizadosRoutes);
 router.use("/receitas", bearerToken, receitasRoutes);
 router.use("/despesas", bearerToken, despesasRoutes);
-router.use("/barbearias", bearerToken, barbeariasRoutes);
+router.use("/barbearias", barbeariasRoutes);
 
 export default router;

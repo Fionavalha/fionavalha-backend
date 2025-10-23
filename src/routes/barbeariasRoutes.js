@@ -8,15 +8,16 @@ import {
   listarHorarioBarbearia,
   editarHorarioBarbearia,
 } from "../controllers/barbeariasController.js";
+import { bearerToken } from "../middlewares/auth.js";
 
 const router = Router();
 
 router.get("/", listarBarbearias);
 router.get("/numero-clientes", listarNumeroClientes);
-router.put("/numero-clientes", editarNumeroClientes);
+router.put("/numero-clientes", bearerToken, editarNumeroClientes);
 router.get("/status", listarStatusBarbearia);
-router.put("/status", editarStatusBarbearia);
+router.put("/status", bearerToken, editarStatusBarbearia);
 router.get("/horario", listarHorarioBarbearia);
-router.put("/horario", editarHorarioBarbearia);
+router.put("/horario", bearerToken, editarHorarioBarbearia);
 
 export default router;
