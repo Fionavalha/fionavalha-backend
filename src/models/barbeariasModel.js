@@ -36,3 +36,16 @@ export async function updateStatusBarbearia(req) {
   const res = await pool.query(sql, values);
   return res.rows[0];
 }
+
+export async function selectHorarioBarbearia() {
+  const sql = "SELECT horario_inicio, horario_fim FROM barbearias WHERE barbeiro_id = 1";
+  const res = await pool.query(sql);
+  return res.rows[0];
+}
+
+export async function updateHorarioBarbearia(req) {
+  const sql = "UPDATE barbearias SET horario_inicio = $1, horario_fim = $2 WHERE barbeiro_id = 1 RETURNING horario_inicio, horario_fim";
+  const values = [req.horario_inicio, req.horario_fim];
+  const res = await pool.query(sql, values);
+  return res.rows[0];
+}

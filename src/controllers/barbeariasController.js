@@ -1,4 +1,4 @@
-import { selectNumeroClientes, updateNumeroClientes, selectStatusBarbearia, updateStatusBarbearia, selectBarbearias } from "../models/barbeariasModel.js";
+import { selectNumeroClientes, updateNumeroClientes, selectStatusBarbearia, updateStatusBarbearia, selectBarbearias, selectHorarioBarbearia, updateHorarioBarbearia } from "../models/barbeariasModel.js";
 
 export async function listarBarbearias(req, res) {
   const resposta = await selectBarbearias();
@@ -22,5 +22,15 @@ export async function listarStatusBarbearia(req, res) {
 
 export async function editarStatusBarbearia(req, res) {
   const resposta = await updateStatusBarbearia(req.body);
+  res.json(resposta);
+}
+
+export async function listarHorarioBarbearia(req, res) {
+  const resposta = await selectHorarioBarbearia();
+  res.json(resposta);
+}
+
+export async function editarHorarioBarbearia(req, res) {
+  const resposta = await updateHorarioBarbearia(req.body);
   res.json(resposta);
 }
