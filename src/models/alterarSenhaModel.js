@@ -4,11 +4,11 @@ import pool from "../config/database.js";
 export async function insertAlteracaoSenha(req) {
   let sql = "SELECT senha FROM barbeiros WHERE id_barbeiro = 1";
   const result = await pool.query(sql);
-
+  
   if (result.rows.length === 0) {
     return { mensagem: "Usuário não encontrado", status: 404 };
   }
-
+  
   const usuario = result.rows[0];
 
   const confere = await criptografar("D", req.senha_antiga, usuario.senha);
@@ -24,8 +24,8 @@ export async function insertAlteracaoSenha(req) {
   try {
     const senhaNova = await criptografar("C", req.senha_nova);
 
-    sql = "UPDATE barbeiros SET senha = $1 WHERE id_barbeiro = $2";
-    values = [senhaNova, id_barbeiro];
+    sql = "UPDATE barbeiros SET senha = $1 WHERE id_barbeiro = 1";
+    let values = [senhaNova];
 
     await pool.query(sql, values);
 
