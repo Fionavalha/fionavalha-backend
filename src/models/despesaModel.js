@@ -59,6 +59,7 @@ export async function selectDespesas(req) {
         TO_CHAR(data_despesa, 'YYYY-MM-DD') AS data_despesa,
         CASE WHEN fixa THEN 'S' ELSE 'N' END AS fixa
       FROM despesas
+	      WHERE fixa = true OR data_despesa = CURRENT_DATE
       ORDER BY data_despesa DESC
     `;
     const sqlTotal = `
