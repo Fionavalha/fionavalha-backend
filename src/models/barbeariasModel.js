@@ -49,3 +49,16 @@ export async function updateHorarioBarbearia(req) {
   const res = await pool.query(sql, values);
   return res.rows[0];
 }
+
+export async function selectAdicionalFormaPagamento() {
+  const sql = "SELECT adicional_forma_pagamento FROM formas_pagamento WHERE adicional_forma_pagamento <> 0";
+  const res = await pool.query(sql);
+  return res.rows[0];
+}
+
+export async function updateAdicionalFormaPagamento(req) {
+  const sql = "UPDATE formas_pagamento SET adicional_forma_pagamento = $1 WHERE adicional_forma_pagamento <> 0 RETURNING adicional_forma_pagamento";
+  const values = [req.adicional_forma_pagamento];
+  const res = await pool.query(sql, values);
+  return res.rows[0];
+}

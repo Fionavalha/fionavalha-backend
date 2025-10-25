@@ -7,6 +7,8 @@ import {
   listarBarbearias,
   listarHorarioBarbearia,
   editarHorarioBarbearia,
+  listarAdicionalFormaPagamento,
+  editarAdicionalFormaPagamento,
 } from "../controllers/barbeariasController.js";
 import { bearerToken } from "../middlewares/auth.js";
 
@@ -19,5 +21,7 @@ router.get("/status", listarStatusBarbearia);
 router.put("/status", bearerToken, editarStatusBarbearia);
 router.get("/horario", listarHorarioBarbearia);
 router.put("/horario", bearerToken, editarHorarioBarbearia);
+router.get("/adicional-forma-pagamento", bearerToken, listarAdicionalFormaPagamento);
+router.put("/adicional-forma-pagamento", bearerToken, editarAdicionalFormaPagamento);
 
 export default router;
