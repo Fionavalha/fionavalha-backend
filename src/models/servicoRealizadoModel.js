@@ -26,8 +26,17 @@ export async function insertServicoRealizado(req) {
     `;
 
     for (const item of req.itens) {
-      await client.query(insertItemSql, [idServico, item.tipo, item.item_id, item.valor_item]);
+      await client.query(insertItemSql, [
+        idServico,
+        item.tipo,
+        item.item_id,
+        item.valor_item,
+      ]);
     }
+
+    const updateNumeroClientesSql =
+      "UPDATE barbearias SET numero_clientes = GREATEST(numero_clientes - 1, 0) WHERE barbeiro_id = 1";
+    await client.query(updateNumeroClientesSql);
 
     await client.query("COMMIT");
     return { id_servico_realizado: idServico };
@@ -149,9 +158,16 @@ export async function updateServicoRealizado(id_servico_realizado, req) {
         valor_total = $2
       WHERE id_servico_realizado = $3
     `;
-    await client.query(updateServicoSql, [req.forma_pagamento_id, req.valor_total, id_servico_realizado]);
+    await client.query(updateServicoSql, [
+      req.forma_pagamento_id,
+      req.valor_total,
+      id_servico_realizado,
+    ]);
 
-    await client.query("DELETE FROM itens_servico_realizado WHERE servico_realizado_id = $1", [id_servico_realizado]);
+    await client.query(
+      "DELETE FROM itens_servico_realizado WHERE servico_realizado_id = $1",
+      [id_servico_realizado]
+    );
 
     const insertItemSql = `
       INSERT INTO itens_servico_realizado (
@@ -163,7 +179,12 @@ export async function updateServicoRealizado(id_servico_realizado, req) {
     `;
 
     for (const item of req.itens) {
-      await client.query(insertItemSql, [id_servico_realizado, item.tipo, item.item_id, item.valor_item]);
+      await client.query(insertItemSql, [
+        id_servico_realizado,
+        item.tipo,
+        item.item_id,
+        item.valor_item,
+      ]);
     }
 
     await client.query("COMMIT");
@@ -180,8 +201,14 @@ export async function deleteServicoRealizado(id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    await client.query("DELETE FROM itens_servico_realizado WHERE servico_realizado_id = $1", [id]);
-    await client.query("DELETE FROM servicos_realizados WHERE id_servico_realizado = $1", [id]);
+    await client.query(
+      "DELETE FROM itens_servico_realizado WHERE servico_realizado_id = $1",
+      [id]
+    );
+    await client.query(
+      "DELETE FROM servicos_realizados WHERE id_servico_realizado = $1",
+      [id]
+    );
     await client.query("COMMIT");
   } catch (error) {
     await client.query("ROLLBACK");
