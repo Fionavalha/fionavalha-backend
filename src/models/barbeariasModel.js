@@ -4,7 +4,8 @@ export async function selectBarbearias() {
   const sql = `
   SELECT numero_clientes, status, 
     TO_CHAR(horario_inicio, 'HH24:00') AS horario_inicio,
-    TO_CHAR(horario_fim, 'HH24:00') AS horario_fim
+    TO_CHAR(horario_fim, 'HH24:00') AS horario_fim,
+    telefone
   FROM barbearias
     WHERE barbeiro_id = 1`;
   const res = await pool.query(sql);
