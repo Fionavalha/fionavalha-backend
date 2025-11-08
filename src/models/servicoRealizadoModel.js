@@ -29,9 +29,6 @@ export async function insertServicoRealizado(req) {
       await client.query(insertItemSql, [idServico, item.tipo, item.item_id, item.valor_item]);
     }
 
-    const updateNumeroClientesSql = "UPDATE barbearias SET numero_clientes = GREATEST(numero_clientes - 1, 0) WHERE barbeiro_id = 1";
-    await client.query(updateNumeroClientesSql);
-
     await client.query("COMMIT");
     return { id_servico_realizado: idServico };
   } catch (error) {
@@ -42,9 +39,48 @@ export async function insertServicoRealizado(req) {
   }
 }
 
+export async function updateServicoRealizado(id_servico_realizado, req) {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const updateServicoSql = `
+      UPDATE servicos_realizados SET
+        forma_pagamento_id = $1,
+        valor_total = $2
+      WHERE id_servico_realizado = $3
+    `;
+
+    await client.query(updateServicoSql, [req.forma_pagamento_id, req.valor_total, id_servico_realizado]);
+
+    await client.query("DELETE FROM itens_servico_realizado WHERE servico_realizado_id = $1", [id_servico_realizado]);
+
+    const insertItemSql = `
+      INSERT INTO itens_servico_realizado (
+        servico_realizado_id,
+        tipo,
+        item_id,
+        valor_item
+      ) VALUES ($1, $2, $3, $4)
+    `;
+
+    for (const item of req.itens) {
+      await client.query(insertItemSql, [id_servico_realizado, item.tipo, item.item_id, item.valor_item]);
+    }
+
+    await client.query("COMMIT");
+    return { message: "Serviço atualizado com sucesso" };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export async function selectServicosRealizados(data) {
   let sql, res;
-
   if (!data) {
     sql = `
       SELECT
@@ -104,7 +140,6 @@ export async function selectServicosRealizados(data) {
     `;
     res = await pool.query(sql, [data]);
   }
-
   return res.rows;
 }
 
@@ -138,45 +173,6 @@ export async function selectServicoRealizado(id) {
   `;
   const res = await pool.query(sql, [id]);
   return res.rows;
-}
-
-export async function updateServicoRealizado(id_servico_realizado, req) {
-  const client = await pool.connect();
-
-  try {
-    await client.query("BEGIN");
-
-    const updateServicoSql = `
-      UPDATE servicos_realizados SET
-        forma_pagamento_id = $1,
-        valor_total = $2
-      WHERE id_servico_realizado = $3
-    `;
-    await client.query(updateServicoSql, [req.forma_pagamento_id, req.valor_total, id_servico_realizado]);
-
-    await client.query("DELETE FROM itens_servico_realizado WHERE servico_realizado_id = $1", [id_servico_realizado]);
-
-    const insertItemSql = `
-      INSERT INTO itens_servico_realizado (
-        servico_realizado_id,
-        tipo,
-        item_id,
-        valor_item
-      ) VALUES ($1, $2, $3, $4)
-    `;
-
-    for (const item of req.itens) {
-      await client.query(insertItemSql, [id_servico_realizado, item.tipo, item.item_id, item.valor_item]);
-    }
-
-    await client.query("COMMIT");
-    return { message: "Serviço atualizado com sucesso" };
-  } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
-  } finally {
-    client.release();
-  }
 }
 
 export async function deleteServicoRealizado(id) {
