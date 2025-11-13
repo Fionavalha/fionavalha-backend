@@ -69,6 +69,9 @@ export async function updateServicoRealizado(id_servico_realizado, req) {
       await client.query(insertItemSql, [id_servico_realizado, item.tipo, item.item_id, item.valor_item]);
     }
 
+    const updateNumeroClientesSql = "UPDATE barbearias SET numero_clientes = GREATEST(numero_clientes - 1, 0) WHERE id_barbearia = 1";
+    await client.query(updateNumeroClientesSql);
+
     await client.query("COMMIT");
     return { message: "Serviço atualizado com sucesso" };
   } catch (error) {
