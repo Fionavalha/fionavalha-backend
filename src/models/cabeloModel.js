@@ -15,7 +15,7 @@ export async function selectCabelo(id_cabelo) {
 }
 
 export async function selectCabelos() {
-  const sql = "SELECT * FROM cabelos";
+  const sql = "SELECT * FROM cabelos ORDER BY valor_cabelo DESC";
   const res = await pool.query(sql);
   return res.rows;
 }

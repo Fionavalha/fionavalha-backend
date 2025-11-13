@@ -15,7 +15,7 @@ export async function selectBarba(id_barba) {
 }
 
 export async function selectBarbas() {
-  const sql = "SELECT * FROM barbas";
+  const sql = "SELECT * FROM barbas ORDER BY valor_barba DESC;";
   const res = await pool.query(sql);
   return res.rows;
 }
