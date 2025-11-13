@@ -15,7 +15,7 @@ export async function selectAdicional(id_adicional) {
 }
 
 export async function selectAdicionais() {
-  const sql = "SELECT * FROM adicionais";
+  const sql = "SELECT * FROM adicionais ORDER BY valor_adicional DESC;";
   const res = await pool.query(sql);
   return res.rows;
 }

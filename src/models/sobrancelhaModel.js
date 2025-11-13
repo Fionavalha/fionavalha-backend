@@ -15,7 +15,7 @@ export async function selectSobrancelha(id_sobrancelha) {
 }
 
 export async function selectSobrancelhas() {
-  const sql = "SELECT * FROM sobrancelhas";
+  const sql = "SELECT * FROM sobrancelhas ORDER BY valor_sobrancelha DESC;";
   const res = await pool.query(sql);
   return res.rows;
 }
