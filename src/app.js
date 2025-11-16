@@ -6,7 +6,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://fionavalha.com.br",
+    origin: "https://www.fionavalha.com.br",
   })
 );
 
