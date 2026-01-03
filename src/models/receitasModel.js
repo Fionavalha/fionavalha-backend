@@ -70,3 +70,24 @@ export async function selectReceitas(req) {
     total_geral: resTotal.rows[0],
   };
 }
+
+export async function selectReceitasFormasPagamento(req) {
+  const dataInicial = req.data_inicial;
+  const dataFinal = req.data_final;
+  const values = [dataInicial, dataFinal];
+
+  const sql = `
+    SELECT 
+      fp.nome_pagamento, 
+      COUNT(*) AS quantidade, 
+      SUM(sr.valor_total) AS total
+    FROM servicos_realizados sr
+    INNER JOIN formas_pagamento fp ON sr.forma_pagamento_id = fp.id_forma_pagamento
+    WHERE sr.data_servico_realizado::date BETWEEN $1 AND $2
+    GROUP BY fp.nome_pagamento
+    ORDER BY quantidade DESC
+    `;
+
+  const res = await pool.query(sql, values);
+  return res.rows;
+}
