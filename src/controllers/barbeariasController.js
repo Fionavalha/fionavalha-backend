@@ -10,6 +10,8 @@ import {
   updateAdicionalFormaPagamento,
 } from "../models/barbeariasModel.js";
 
+import { io } from "../server.js";
+
 export async function listarBarbearias(req, res) {
   const resposta = await selectBarbearias();
   res.json(resposta);
@@ -22,6 +24,14 @@ export async function listarNumeroClientes(req, res) {
 
 export async function editarNumeroClientes(req, res) {
   const resposta = await updateNumeroClientes(req.body);
+
+  const dadosAtualizados = await selectBarbearias();
+
+  io.emit("barbeariaAtualizada", {
+    numero_clientes: dadosAtualizados.numero_clientes,
+    status: dadosAtualizados.status,
+  });
+
   res.json(resposta);
 }
 
@@ -32,6 +42,14 @@ export async function listarStatusBarbearia(req, res) {
 
 export async function editarStatusBarbearia(req, res) {
   const resposta = await updateStatusBarbearia(req.body);
+
+  const dadosAtualizados = await selectBarbearias();
+
+  io.emit("barbeariaAtualizada", {
+    numero_clientes: dadosAtualizados.numero_clientes,
+    status: dadosAtualizados.status,
+  });
+
   res.json(resposta);
 }
 
