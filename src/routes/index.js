@@ -10,6 +10,7 @@ import formasPagamentoRoutes from "./formasPagamentoRoutes.js";
 import servicosRealizadosRoutes from "./servicosRealizadosRoutes.js";
 import receitasRoutes from "./receitasRoutes.js";
 import despesasRoutes from "./despesasRoutes.js";
+import resumoRoutes from "./resumoRoutes.js";
 import barbeariasRoutes from "./barbeariasRoutes.js";
 
 const router = Router();
@@ -24,6 +25,7 @@ router.use("/formas-pagamento", bearerToken, formasPagamentoRoutes);
 router.use("/servicos-realizados", bearerToken, servicosRealizadosRoutes);
 router.use("/receitas", bearerToken, receitasRoutes);
 router.use("/despesas", bearerToken, despesasRoutes);
+router.use("/resumo", bearerToken, resumoRoutes);
 router.use("/barbearias", barbeariasRoutes);
 
 export default router;
